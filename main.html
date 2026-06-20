@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PJSK Player 歌曲库</title>
+    <style>
+        :root { --theme: #884499; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: #1a1220;
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 70% 60% at 30% 30%, rgba(136,68,153,0.35) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 50% at 75% 70%, rgba(136,68,153,0.22) 0%, transparent 50%);
+            filter: blur(80px);
+            pointer-events: none;
+        }
+        .header {
+            position: relative;
+            z-index: 1;
+            padding: 48px 40px 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p {
+            color: #999;
+            margin-top: 8px;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .header .count {
+            margin-top: 4px;
+            font-size: 13px;
+            color: rgba(168,85,247,0.6);
+        }
+        .song-grid {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 40px 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 24px;
+        }
+        .song-card {
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.25,0.1,0.25,1);
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.04);
+        }
+        .song-card:hover {
+            transform: translateY(-6px) scale(1.02);
+        }
+        .song-card:active { transform: scale(0.96); }
+        .card-cover {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #2d2d5e, #1a1a3e);
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: box-shadow 0.35s ease;
+        }
+        .song-card:hover .card-cover {
+            box-shadow: 0 12px 36px rgba(136,68,153,0.3);
+        }
+        .card-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .song-card:hover .card-cover img {
+            transform: scale(1.08);
+        }
+        .card-cover .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        .song-card:hover .play-overlay { opacity: 1; }
+        .play-overlay .play-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(136,68,153,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #fff;
+            transform: scale(0.7);
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .song-card:hover .play-icon {
+            transform: scale(1);
+        }
+        .card-info {
+            padding: 12px 4px 4px;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card-artist {
+            font-size: 13px;
+            color: #888;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card-badges {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .card-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: rgba(136,68,153,0.15);
+            color: rgba(255,255,255,0.5);
+        }
+        .card-badge.ok { color: #6cf; background: rgba(102,204,255,0.1); }
+        .card-badge.missing { color: #f66; background: rgba(255,102,102,0.1); }
+        .card-badge.perfect { color: #6f6; background: rgba(102,255,102,0.1); }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+        }
+        .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
+        .empty-state h3 { font-size: 20px; margin-bottom: 8px; color: #999; }
+        .empty-state p { font-size: 14px; line-height: 1.6; }
+        .empty-state code {
+            background: rgba(255,255,255,0.08);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #c084fc;
+        }
+
+        /* 加载动画 */
+        .song-grid.loading .song-card {
+            opacity: 0;
+            animation: fadeUp 0.4s ease forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 800px) {
+            .song-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; padding: 16px 16px 60px; }
+            .header { padding: 32px 16px 8px; }
+            .header h1 { font-size: 28px; }
+        }
+        @media (max-width: 480px) {
+            .song-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px 12px 40px; }
+            .card-title { font-size: 13px; }
+            .card-artist { font-size: 11px; }
+            .play-overlay .play-icon { width: 44px; height: 44px; font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>♪ PJSK Player</h1>
+        <p>点击封面播放歌曲</p>
+        <div class="count" id="songCount"></div>
+    </div>
+    <div class="song-grid" id="songGrid"></div>
+    <script>
+    // ═══════════════════════════════════════════════════════════
+    // 从 songs.json 加载歌曲库
+    // ═══════════════════════════════════════════════════════════
+    let songs = [];
+
+    async function loadSongs() {
+        try {
+            const response = await fetch('songs.json');
+            songs = await response.json();
+            render();
+        } catch (error) {
+            console.error('加载失败:', error);
+            renderError('无法加载 songs.json');
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // 渲染封面墙
+    // ═══════════════════════════════════════════════════════════
+    function render() {
+        const grid = document.getElementById('songGrid');
+        document.getElementById('songCount').textContent = `共 ${songs.length} 首`;
+
+        if (songs.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📋</div>
+                    <h3>还没有添加歌曲</h3>
+                    <p>在 <code>songs.json</code> 中添加歌曲信息后刷新即可</p>
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        songs.forEach((s, i) => {
+            const audioOk = !!(s.neteaseId);
+            const LRC_IDS = new Set(['19','60','61','66','90']);
+            const lyricOk = LRC_IDS.has(s.id);
+            let badge;
+            if (audioOk && lyricOk) badge = '<span class="card-badge perfect">完整</span>';
+            else if (audioOk) badge = '<span class="card-badge ok">有音频</span>';
+            else badge = '<span class="card-badge missing">无音频</span>';
+
+            const coverInner = s.cover
+                ? `<img src="${s.cover}" alt="${s.title}" loading="lazy" />`
+                : `<span style="font-size:40px;opacity:0.3;">🎵</span>`;
+            html += `
+                <div class="song-card" onclick="playSong('${s.id}')" style="animation-delay:${i * 0.04}s">
+                    <div class="card-cover">
+                        ${coverInner}
+                        <div class="play-overlay"><div class="play-icon">▶</div></div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title">${s.title || '未命名歌曲'}</div>
+                        <div class="card-artist">${s.artist || '未知歌手'}</div>
+                        <div class="card-badges">${badge}</div>
+                    </div>
+                </div>`;
+        });
+        grid.innerHTML = html;
+        grid.classList.add('loading');
+    }
+
+    function renderError(message) {
+        const grid = document.getElementById('songGrid');
+        grid.innerHTML = `
+            <div class="empty-state" style="color:#e55;">
+                <div class="icon">⚠️</div>
+                <h3>加载失败</h3>
+                <p>${message}</p>
+                <p style="margin-top:12px;font-size:13px;color:#888;">请确保 <code>songs.json</code> 存在且格式正确</p>
+            </div>`;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // 点击歌曲 → 跳转播放器
+    // ═══════════════════════════════════════════════════════════
+    function playSong(id) {
+        const song = songs.find(s => s.id === id);
+        if (!song) { alert('歌曲数据未找到'); return; }
+        const NETBASE = 'http://music.163.com/song/media/outer/url?id=';
+        if (!song.neteaseId) { alert('该歌曲尚未配置音频文件'); return; }
+
+        const data = {
+            title: song.title || '',
+            artist: song.artist || '',
+            coverUrl: song.cover || '',
+            audioUrl: NETBASE + song.neteaseId + '.mp3',
+            lrcText: '',
+        };
+        localStorage.setItem('pjsk_song_' + id, JSON.stringify(data));
+        window.location.href = 'player.html?id=' + encodeURIComponent(id);
+    }
+
+    loadSongs();
+    </script>
+</body>
+</html>

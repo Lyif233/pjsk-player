@@ -1,0 +1,154 @@
+[
+    {
+        "id": "19",
+        "title": "シャルル",
+        "artist": "バルーン",
+        "cover": "./jacket/19.png",
+        "lyric": "./lyrics/19.xlrc",
+        "neteaseId": "1935705479"
+    },
+    {
+        "id": "22",
+        "title": "命に嫌われている",
+        "artist": "カンザキイオリ",
+        "cover": "./jacket/22.png",
+        "lyric": "./lyrics/22.xlrc",
+        "neteaseId": "1935704604"
+    },
+    {
+        "id": "60",
+        "title": "悔やむと書いてミライ",
+        "artist": "まふまふ",
+        "cover": "./jacket/60.png",
+        "lyric": "./lyrics/60.xlrc",
+        "neteaseId": "1864932183"
+    },
+    {
+        "id": "61",
+        "title": "携帯恋話",
+        "artist": "まふまふ",
+        "cover": "./jacket/61.png",
+        "lyric": "./lyrics/61.xlrc",
+        "neteaseId": "1864931358"
+    },
+    {
+        "id": "62",
+        "title": "ジャックポットサッドガール",
+        "artist": "syudou",
+        "cover": "./jacket/62.png",
+        "lyric": "./lyrics/62.xlrc",
+        "neteaseId": "1864932184"
+    },
+    {
+        "id": "66",
+        "title": "ハロ／ハワユ",
+        "artist": "ナノウ",
+        "cover": "./jacket/66.png",
+        "lyric": "./lyrics/66.xlrc",
+        "neteaseId": "1935705493"
+    },
+    {
+        "id": "67",
+        "title": "自傷無色",
+        "artist": "ササノマリイ",
+        "cover": "./jacket/67.png",
+        "lyric": "./lyrics/67.xlrc",
+        "neteaseId": "1935704598"
+    },
+    {
+        "id": "74",
+        "title": "独りんぼエンヴィー",
+        "artist": "koyori（電ポルP）",
+        "cover": "./jacket/74.png",
+        "lyric": "./lyrics/74.xlrc",
+        "neteaseId": "1935705482"
+    },
+    {
+        "id": "90",
+        "title": "限りなく灰色へ",
+        "artist": "すりぃ",
+        "cover": "./jacket/90.png",
+        "lyric": "./lyrics/90.xlrc",
+        "neteaseId": "1913268598"
+    },
+    {
+        "id": "92",
+        "title": "乙女解剖",
+        "artist": "DECO*27",
+        "cover": "./jacket/92.png",
+        "lyric": "./lyrics/92.xlrc",
+        "neteaseId": "1935704603"
+    },
+    {
+        "id": "94",
+        "title": "とても痛い痛がりたい",
+        "artist": "EZFG",
+        "cover": "./jacket/94.png",
+        "lyric": "./lyrics/94.xlrc",
+        "neteaseId": "1935705487"
+    },
+    {
+        "id": "111",
+        "title": "カトラリー",
+        "artist": "有機酸",
+        "cover": "./jacket/111.png",
+        "lyric": "./lyrics/111.xlrc",
+        "neteaseId": "1935704610"
+    },
+    {
+        "id": "116",
+        "title": "アイディスマイル",
+        "artist": "とあ",
+        "cover": "./jacket/116.png",
+        "lyric": "./lyrics/116.xlrc",
+        "neteaseId": "1913268601"
+    },
+    {
+        "id": "125",
+        "title": "ボッカデラベリタ",
+        "artist": "柊キライ",
+        "cover": "./jacket/125.png",
+        "lyric": "./lyrics/125.xlrc",
+        "neteaseId": "1935705488"
+    },
+    {
+        "id": "129",
+        "title": "ビターチョコデコレーション",
+        "artist": "syudou",
+        "cover": "./jacket/129.png",
+        "lyric": "./lyrics/129.xlrc",
+        "neteaseId": "1935704600"
+    },
+    {
+        "id": "139",
+        "title": "夜に駆ける",
+        "artist": "Ayase",
+        "cover": "./jacket/139.png",
+        "lyric": "./lyrics/139.xlrc",
+        "neteaseId": "1935705494"
+    },
+    {
+        "id": "141",
+        "title": "群青讃歌",
+        "artist": "Eve",
+        "cover": "./jacket/141.png",
+        "lyric": "./lyrics/141.xlrc",
+        "neteaseId": ""
+    },
+    {
+        "id": "142",
+        "title": "再生",
+        "artist": "ピコン",
+        "cover": "./jacket/142.png",
+        "lyric": "./lyrics/142.xlrc",
+        "neteaseId": ""
+    },
+    {
+        "id": "145",
+        "title": "ベノム",
+        "artist": "かいりきベア",
+        "cover": "./jacket/145.png",
+        "lyric": "./lyrics/145.xlrc",
+        "neteaseId": "1935704601"
+    }
+]

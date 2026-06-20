@@ -1,0 +1,29 @@
+# ═══════════════════════════════════
+# PJSK Player - .gitignore
+# ═══════════════════════════════════
+
+# VS Code
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temp / Backup
+*.tmp
+*.log
+*.bak
+*.swp
+*~
+
+# Dependencies (if any later)
+node_modules/
