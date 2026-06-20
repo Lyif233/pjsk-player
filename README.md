@@ -1,5 +1,7 @@
 # 🎵 PJSK Player
 
+[![GitHub Pages](https://github.com/Lyif233/pjsk-player/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/Lyif233/pjsk-player/actions/workflows/deploy-pages.yml)
+
 基于 Web 的《世界计划 多彩舞台！ feat. 初音未来》歌曲播放器，支持多角色分词着色歌词展示。
 
 ## ✨ 主要功能
@@ -22,7 +24,13 @@
 ![シャルル|糖画画糖都神好吧](./screenshots/player2.png)
 *测试歌曲2*
 
-## 🚀 快速开始
+## 🌐 在线访问
+
+项目已配置 GitHub Pages 自动部署，每当你推送到 `main` 分支，便会自动同步更新：
+
+👉 **https://lyif233.github.io/pjsk-player/**
+
+## 🚀 本地运行
 
 1. 将项目放在任意静态服务器下（如 Nginx、Python http.server 等）
 2. 打开 `main.html` 浏览歌曲库
