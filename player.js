@@ -106,6 +106,13 @@ createApp({
             // 4) 解析歌词（仅在有歌词时）
             if (audioSrc.value && xlrcText.value && configReady.value) {
                 parsexlrc();
+                // 默认滚动到第一句实词
+                nextTick(() => {
+                    const lyrics = parsedLyrics.value;
+                    let first = 0;
+                    while (first < lyrics.length && lyrics[first].isGap) first++;
+                    if (first < lyrics.length) scrollToIndex(first);
+                });
             }
 
             // 5) 自动播放
@@ -157,9 +164,9 @@ createApp({
                 const m = line.match(lineRegex);
                 if (!m) return;
 
-                const time = parseInt(m[1], 10) * 60 + parseFloat(m[2]) - 0.3; // 提前 300ms
+                const time = parseInt(m[1], 10) * 60 + parseFloat(m[2]) - 0.35; // 提前 350ms
                 const rest = m[3].trim();
-                if (!rest) { result.push({ time, text: '', isGap: true }); return; }
+                if (!rest) { result.push({ time, text: '', isGap: true }); lastIdSet = new Set(); return; }
 
                 const dc = dynamicConfig.value || {};
                 const segMatch = [...rest.matchAll(idRegex)];
@@ -297,11 +304,11 @@ createApp({
             const line = lyrics[idx];
 
             if (line.isGap) {
-                // 间奏：取消高亮，滚动到下一实词
-                currentIndex.value = -1;
-                let next = idx + 1;
-                while (next < lyrics.length && lyrics[next].isGap) next++;
-                if (next < lyrics.length) scrollToIndex(next);
+                // 间奏：焦点停留在空行上
+                if (currentIndex.value !== idx) {
+                    currentIndex.value = idx;
+                    scrollToCurrent();
+                }
             } else {
                 // 实词：正常高亮 + 滚动
                 if (idx !== currentIndex.value) {
@@ -337,10 +344,10 @@ createApp({
         function centerLine(el) {
             const box = lyricsBox.value;
             if (!box) return;
-            // 以 .lyric-text 顶端为基准，不含上方头像区域
+            // 以 .lyric-text 顶端为基准
+            const LINE_H = 64; // 40px * 1.6 line-height
             const textEl = el.querySelector('.lyric-text');
-            const boxH = box.clientHeight;
-            const targetTop = (textEl ? textEl.offsetTop : el.offsetTop + 10) - boxH / 2 + 72;
+            const targetTop = (textEl ? textEl.offsetTop : el.offsetTop + 10) - LINE_H * 2;
             box.scrollTo({ top: targetTop, behavior: 'smooth' });
         }
 

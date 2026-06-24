@@ -165,7 +165,7 @@
 
         .lyric-line {
             padding: 10px 0;
-            transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
             opacity: 0.28;
             cursor: pointer;
         }
@@ -213,7 +213,7 @@
             gap: 12px;
             pointer-events: none;
         }
-        .no-lyrics .nl-icon {
+        .no-lyrics {
             font-size: 56px;
             opacity: 0.15;
         }
@@ -235,13 +235,18 @@
             line-break: strict;
             overflow-wrap: break-word;
             transform-origin: left top;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s ease;
         }
         /* 非激活行视觉缩小到 32px 效果（不影响布局） */
         .lyric-line:not(.active) .lyric-text {
             transform: scale(0.8);
         }
         .lyric-text.gradient-text {
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-char {
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -261,7 +266,7 @@
 .demo .focus-line {
     display: block;
     position: sticky;
-    top: calc(50% - 72px);
+    top: 128px; /* 40px * 1.6 * 2 = 两行文字空间 */
     z-index: 999;
     height: 0;
     border-top: 2px solid rgba(255,255,255,0.8);
@@ -272,7 +277,7 @@
     transform: translateY(-50%);
 }
 .demo .focus-line::before {
-    content: '─── 焦点 ───';
+    content: '─── -o- ───';
     position: absolute;
     left: 50%;
     transform: translateX(-50%);

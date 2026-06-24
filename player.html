@@ -47,7 +47,6 @@
             <div class="lyrics-scroll" ref="lyricsBox">
                 <div class="focus-line"></div>
                 <div class="no-lyrics" v-if="parsedLyrics.length === 0 && audioSrc">
-                    <div class="nl-icon">📝</div>
                     <div class="nl-text">暂无歌词</div>
                 </div>
                 <div class="lyrics-inner" v-else>
@@ -78,11 +77,15 @@
                         </template>
                         <template v-else>
                         <div class="lyric-text"
-                             :class="{ 'gradient-text': line.isGradient }"
-                             :style="line.isGradient
-                                ? { backgroundImage: line.color }
-                                : { color: line.color }">
-                            {{ line.text }}
+                             :style="{ color: line.isGradient ? 'transparent' : line.color }">
+                            <template v-if="line.isGradient">
+                                <span v-for="(ch, ci) in [...line.text]" :key="ci"
+                                      class="gradient-char"
+                                      :style="{ backgroundImage: line.color }">{{ ch }}</span>
+                            </template>
+                            <template v-else>
+                                {{ line.text }}
+                            </template>
                         </div>
                         </template>
 
