@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,106 +17,98 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="player.css">
 </head>
+
 <body>
-<div id="app">
+    <div id="app">
 
-    <!-- ═══ 播放器 ═══ -->
-    <div class="player" v-if="launched">
-        <!-- 左侧 -->
-        <div class="left-panel">
-            <div class="cover-art">
-                <img v-if="coverUrl" :src="coverUrl" alt="封面" />
-                <div v-else class="cover-placeholder">🎵</div>
-            </div>
-            <div class="song-info">
-                <div class="song-title">{{ songTitle || '未知歌曲' }}</div>
-                <div class="song-artist">{{ songArtist || '未知歌手' }}</div>
-            </div>
-            <div class="progress-section">
-                <div class="time-row">
-                    <span class="current">{{ formatTime(currentTime) }}</span>
-                    <span>{{ formatTime(duration) }}</span>
+        <!-- ═══ 播放器 ═══ -->
+        <div class="player" v-if="launched">
+            <!-- 左侧 -->
+            <div class="left-panel">
+                <div class="cover-art">
+                    <img v-if="coverUrl" :src="coverUrl" alt="Cover" />
+                    <div v-else class="cover-placeholder">🎵</div>
                 </div>
-                <div class="progress-bar" @click="seekAudio">
-                    <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+                <div class="song-info">
+                    <div class="song-title">{{ songTitle || '-' }}</div>
+                    <div class="song-artist">{{ songArtist || '-' }}</div>
+                </div>
+                <div class="progress-section">
+                    <div class="time-row">
+                        <span class="current">{{ formatTime(currentTime) }}</span>
+                        <span>{{ formatTime(duration) }}</span>
+                    </div>
+                    <div class="progress-bar" @click="seekAudio">
+                        <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+                    </div>
+                </div>
+                <div class="audio-select">
+                    <button class="btn" @click="togglePlay" tabindex="-1">{{ isPlaying ? '⏸' : '▶' }}</button>
+                    <div v-if="audioError" style="color:#e55;font-size:12px;margin-top:6px;">{{ audioError }}</div>
                 </div>
             </div>
-            <div class="audio-select">
-                <button class="btn" @click="togglePlay" tabindex="-1">{{ isPlaying ? '⏸ 暂停' : '▶ 播放' }}</button>
-                <div v-if="audioError" style="color:#e55;font-size:12px;margin-top:6px;">{{ audioError }}</div>
-            </div>
-        </div>
 
-        <!-- 右侧：歌词 -->
-        <div class="right-panel">
-            <div class="lyrics-scroll" ref="lyricsBox">
-                <div class="focus-line"></div>
-                <div class="no-lyrics" v-if="parsedLyrics.length === 0 && audioSrc">
-                    <div class="nl-text">暂无歌词</div>
-                </div>
-                <div class="lyrics-inner" v-else>
-                    <div v-for="(line, index) in parsedLyrics"
-                         :key="index"
-                         :class="['lyric-line', { active: currentIndex === index }]"
-                         @click="!line.isGap && playFrom(line.time)">
+            <!-- 右侧：歌词 -->
+            <div class="right-panel">
+                <div class="lyrics-scroll" ref="lyricsBox">
+                    <div class="focus-line"></div>
+                    <div class="no-lyrics" v-if="parsedLyrics.length === 0 && audioSrc">
+                        <div class="nl-text">暂无歌词</div>
+                    </div>
+                    <div class="lyrics-inner" v-else>
+                        <div v-for="(line, index) in parsedLyrics" :key="index"
+                            :class="['lyric-line', { active: currentIndex === index }]"
+                            @click="!line.isGap && playFrom(line.time)">
 
-                        <template v-if="line.isGap"></template>
-                        <template v-else>
-
-                        <div class="avatars" v-if="line.showAvatar && line.chars.length">
-                            <div class="avatar-ring"
-                                 v-for="(ch, ci) in line.chars"
-                                 :style="{ '--avatar-color': line.charColors[ci] || '#555' }">
-                                <img :src="avatars[ch]" :title="ch" />
-                            </div>
-                        </div>
-
-                        <template v-if="line.segments">
-                            <span v-for="(seg, si) in line.segments"
-                                  class="lyric-text lyric-seg"
-                                  :class="{ 'gradient-text': seg.isGradient }"
-                                  :style="seg.isGradient
-                                    ? { backgroundImage: seg.color }
-                                    : { color: seg.color }">
-                                <template v-if="seg.isGradient">
-                                    <span v-for="(ch, ci) in [...seg.text]" :key="ci"
-                                          class="gradient-char"
-                                          :style="{ backgroundImage: seg.color }">{{ ch }}</span>
-                                </template>
-                                <template v-else>{{ seg.text }}&thinsp;</template>
-                            </span>
-                        </template>
-                        <template v-else>
-                        <div class="lyric-text"
-                             :style="{ color: line.isGradient ? 'transparent' : line.color }">
-                            <template v-if="line.isGradient">
-                                <span v-for="(ch, ci) in [...line.text]" :key="ci"
-                                      class="gradient-char"
-                                      :style="{ backgroundImage: line.color }">{{ ch }}</span>
-                            </template>
+                            <template v-if="line.isGap"></template>
                             <template v-else>
-                                {{ line.text }}
+
+                                <div class="avatars" v-if="line.showAvatar && line.chars.length">
+                                    <div class="avatar-ring" v-for="(ch, ci) in line.chars"
+                                        :style="{ '--avatar-color': line.charColors[ci] || '#555' }">
+                                        <img :src="avatars[ch]" :title="ch" />
+                                    </div>
+                                </div>
+
+                                <template v-if="line.segments">
+                                    <div class="lyric-text">
+                                        <span v-for="(seg, si) in line.segments" class="lyric-seg"
+                                            :class="{ 'gradient-text': seg.isGradient }" :style="seg.isGradient
+                                        ? { backgroundImage: seg.color }
+                                        : { color: seg.color }">
+                                            <template v-if="seg.isGradient">
+                                                <span v-for="(ch, ci) in [...seg.text]" :key="ci" class="gradient-char"
+                                                    :style="{ backgroundImage: seg.color }">{{ ch }}</span>
+                                            </template>
+                                            <template v-else>{{ seg.text }}&thinsp;</template>
+                                        </span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <div class="lyric-text"
+                                        :style="{ color: line.isGradient ? 'transparent' : line.color }">
+                                        <template v-if="line.isGradient">
+                                            <span v-for="(ch, ci) in [...line.text]" :key="ci" class="gradient-char"
+                                                :style="{ backgroundImage: line.color }">{{ ch }}</span>
+                                        </template>
+                                        <template v-else>
+                                            {{ line.text }}
+                                        </template>
+                                    </div>
+                                </template>
+
                             </template>
                         </div>
-                        </template>
-
-                        </template>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <audio ref="audioPlayer"
-           style="display:none"
-           :src="audioSrc"
-           @timeupdate="onTimeUpdate"
-           @loadedmetadata="onLoadedMeta"
-           @ended="onEnded"
-           @error="onAudioError"
-           @play="isPlaying = true"
-           @pause="isPlaying = false"></audio>
-</div>
-<script src="player.js"></script>
+        <audio ref="audioPlayer" style="display:none" :src="audioSrc" @timeupdate="onTimeUpdate"
+            @loadedmetadata="onLoadedMeta" @ended="onEnded" @error="onAudioError" @play="isPlaying = true"
+            @pause="isPlaying = false"></audio>
+    </div>
+    <script src="player.js"></script>
 </body>
+
 </html>

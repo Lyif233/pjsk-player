@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PJSK Player 歌曲库</title>
     <style>
-        :root { --theme: #884499; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --theme: #884499;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
             background: #1a1220;
@@ -14,17 +23,19 @@
             min-height: 100vh;
             position: relative;
         }
+
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             z-index: 0;
             background:
-                radial-gradient(ellipse 70% 60% at 30% 30%, rgba(136,68,153,0.35) 0%, transparent 55%),
-                radial-gradient(ellipse 50% 50% at 75% 70%, rgba(136,68,153,0.22) 0%, transparent 50%);
+                radial-gradient(ellipse 70% 60% at 30% 30%, rgba(136, 68, 153, 0.35) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 50% at 75% 70%, rgba(136, 68, 153, 0.22) 0%, transparent 50%);
             filter: blur(80px);
             pointer-events: none;
         }
+
         .header {
             position: relative;
             z-index: 1;
@@ -33,6 +44,7 @@
             margin: 0 auto;
             text-align: center;
         }
+
         .header h1 {
             font-size: 36px;
             font-weight: 800;
@@ -42,17 +54,20 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
         .header p {
             color: #999;
             margin-top: 8px;
             font-size: 14px;
             letter-spacing: 1px;
         }
+
         .header .count {
             margin-top: 4px;
             font-size: 13px;
-            color: rgba(168,85,247,0.6);
+            color: rgba(168, 85, 247, 0.6);
         }
+
         .song-grid {
             position: relative;
             z-index: 1;
@@ -63,18 +78,24 @@
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 24px;
         }
+
         .song-card {
             cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.25,0.1,0.25,1);
+            transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
             position: relative;
             border-radius: 12px;
             overflow: hidden;
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
         }
+
         .song-card:hover {
             transform: translateY(-6px) scale(1.02);
         }
-        .song-card:active { transform: scale(0.96); }
+
+        .song-card:active {
+            transform: scale(0.96);
+        }
+
         .card-cover {
             width: 100%;
             aspect-ratio: 1;
@@ -82,12 +103,14 @@
             overflow: hidden;
             background: linear-gradient(135deg, #2d2d5e, #1a1a3e);
             position: relative;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             transition: box-shadow 0.35s ease;
         }
+
         .song-card:hover .card-cover {
-            box-shadow: 0 12px 36px rgba(136,68,153,0.3);
+            box-shadow: 0 12px 36px rgba(136, 68, 153, 0.3);
         }
+
         .card-cover img {
             width: 100%;
             height: 100%;
@@ -95,13 +118,15 @@
             display: block;
             transition: transform 0.4s ease;
         }
+
         .song-card:hover .card-cover img {
             transform: scale(1.08);
         }
+
         .card-cover .play-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.45);
+            background: rgba(0, 0, 0, 0.45);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -109,26 +134,33 @@
             transition: opacity 0.3s ease;
             backdrop-filter: blur(2px);
         }
-        .song-card:hover .play-overlay { opacity: 1; }
+
+        .song-card:hover .play-overlay {
+            opacity: 1;
+        }
+
         .play-overlay .play-icon {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: rgba(136,68,153,0.85);
+            background: rgba(136, 68, 153, 0.85);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 28px;
             color: #fff;
             transform: scale(0.7);
-            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
         .song-card:hover .play-icon {
             transform: scale(1);
         }
+
         .card-info {
             padding: 12px 4px 4px;
         }
+
         .card-title {
             font-size: 15px;
             font-weight: 600;
@@ -136,6 +168,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .card-artist {
             font-size: 13px;
             color: #888;
@@ -144,21 +177,35 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .card-badges {
             display: flex;
             gap: 6px;
             margin-top: 6px;
         }
+
         .card-badge {
             font-size: 10px;
             padding: 2px 8px;
             border-radius: 8px;
-            background: rgba(136,68,153,0.15);
-            color: rgba(255,255,255,0.5);
+            background: rgba(136, 68, 153, 0.15);
+            color: rgba(255, 255, 255, 0.5);
         }
-        .card-badge.ok { color: #6cf; background: rgba(102,204,255,0.1); }
-        .card-badge.missing { color: #f66; background: rgba(255,102,102,0.1); }
-        .card-badge.perfect { color: #6f6; background: rgba(102,255,102,0.1); }
+
+        .card-badge.ok {
+            color: #6cf;
+            background: rgba(102, 204, 255, 0.1);
+        }
+
+        .card-badge.missing {
+            color: #f66;
+            background: rgba(255, 102, 102, 0.1);
+        }
+
+        .card-badge.perfect {
+            color: #6f6;
+            background: rgba(102, 255, 102, 0.1);
+        }
 
         /* ── 工具栏（标题与封面墙之间） ── */
         .toolbar {
@@ -178,15 +225,16 @@
             width: 38px;
             height: 38px;
             border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
             color: #aaa;
             cursor: pointer;
             transition: all 0.25s;
         }
+
         .filter-btn:hover {
-            background: rgba(168,85,247,0.18);
-            border-color: rgba(168,85,247,0.3);
+            background: rgba(168, 85, 247, 0.18);
+            border-color: rgba(168, 85, 247, 0.3);
             color: #fff;
         }
 
@@ -196,23 +244,25 @@
             top: calc(100% + 4px);
             right: 0;
             z-index: 200;
-            background: rgba(25,18,30,0.98);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(25, 18, 30, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 14px;
             padding: 22px 24px;
             min-width: 230px;
             text-align: left;
-            box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
             opacity: 0;
             pointer-events: none;
             transform: translateY(-6px);
-            transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+            transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
         }
+
         .filter-popup.open {
             opacity: 1;
             pointer-events: auto;
             transform: translateY(0);
         }
+
         .popup-title {
             font-size: 17px;
             font-weight: 600;
@@ -220,18 +270,24 @@
             margin-bottom: 20px;
             text-align: center;
         }
+
         .popup-section {
             margin-bottom: 18px;
         }
-        .popup-section:last-child { margin-bottom: 0; }
+
+        .popup-section:last-child {
+            margin-bottom: 0;
+        }
+
         .popup-section-title {
             font-size: 12px;
             font-weight: 600;
-            color: rgba(168,85,247,0.7);
+            color: rgba(168, 85, 247, 0.7);
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 10px;
         }
+
         .filter-popup .filter-item {
             display: flex;
             align-items: center;
@@ -243,8 +299,15 @@
             padding: 6px 0;
             transition: color 0.15s;
         }
-        .filter-popup .filter-item:hover { color: #fff; }
-        .filter-popup .filter-item input { display: none; }
+
+        .filter-popup .filter-item:hover {
+            color: #fff;
+        }
+
+        .filter-popup .filter-item input {
+            display: none;
+        }
+
         .filter-popup .filter-dot {
             display: inline-block;
             width: 12px;
@@ -254,21 +317,41 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
-        .filter-popup .filter-item input:checked + .filter-dot {
+
+        .filter-popup .filter-item input:checked+.filter-dot {
             border-color: transparent;
         }
-        .filter-popup .filter-dot.dot-ok { background: transparent; }
-        .filter-popup .filter-item input:checked + .filter-dot.dot-ok { background: #6f6; }
-        .filter-popup .filter-dot.dot-warn { background: transparent; }
-        .filter-popup .filter-item input:checked + .filter-dot.dot-warn { background: #6cf; }
-        .filter-popup .filter-dot.dot-miss { background: transparent; }
-        .filter-popup .filter-item input:checked + .filter-dot.dot-miss { background: #f66; }
+
+        .filter-popup .filter-dot.dot-ok {
+            background: transparent;
+        }
+
+        .filter-popup .filter-item input:checked+.filter-dot.dot-ok {
+            background: #6f6;
+        }
+
+        .filter-popup .filter-dot.dot-warn {
+            background: transparent;
+        }
+
+        .filter-popup .filter-item input:checked+.filter-dot.dot-warn {
+            background: #6cf;
+        }
+
+        .filter-popup .filter-dot.dot-miss {
+            background: transparent;
+        }
+
+        .filter-popup .filter-item input:checked+.filter-dot.dot-miss {
+            background: #f66;
+        }
 
         .filter-popup .sort-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
+
         .filter-popup .sort-option {
             cursor: pointer;
             color: #aaa;
@@ -281,7 +364,11 @@
             gap: 8px;
             font-size: 14px;
         }
-        .filter-popup .sort-option:hover { color: #fff; }
+
+        .filter-popup .sort-option:hover {
+            color: #fff;
+        }
+
         .filter-popup .sort-dot {
             display: inline-block;
             width: 12px;
@@ -291,17 +378,22 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
+
         .filter-popup .sort-option.active .sort-dot {
             border-color: transparent;
             background: #a855f7;
         }
+
         .filter-popup .sort-arrow {
             font-size: 10px;
             color: #888;
             margin-left: auto;
             transition: color 0.15s;
         }
-        .filter-popup .sort-option.active .sort-arrow { color: #a855f7; }
+
+        .filter-popup .sort-option.active .sort-arrow {
+            color: #a855f7;
+        }
 
         .empty-state {
             grid-column: 1 / -1;
@@ -309,11 +401,25 @@
             padding: 80px 20px;
             color: #666;
         }
-        .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
-        .empty-state h3 { font-size: 20px; margin-bottom: 8px; color: #999; }
-        .empty-state p { font-size: 14px; line-height: 1.6; }
+
+        .empty-state .icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
         .empty-state code {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 13px;
@@ -325,26 +431,67 @@
             opacity: 0;
             animation: fadeUp 0.4s ease forwards;
         }
+
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 800px) {
-            .song-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; padding: 16px 16px 60px; }
-            .header { padding: 32px 16px 8px; }
-            .header h1 { font-size: 28px; }
-            .toolbar { padding: 0 16px 6px; }
+            .song-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
+                padding: 16px 16px 60px;
+            }
+
+            .header {
+                padding: 32px 16px 8px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .toolbar {
+                padding: 0 16px 6px;
+            }
         }
+
         @media (max-width: 480px) {
-            .song-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px 12px 40px; }
-            .card-title { font-size: 13px; }
-            .card-artist { font-size: 11px; }
-            .play-overlay .play-icon { width: 44px; height: 44px; font-size: 20px; }
-            .toolbar { padding: 0 12px 4px; }
+            .song-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 12px 12px 40px;
+            }
+
+            .card-title {
+                font-size: 13px;
+            }
+
+            .card-artist {
+                font-size: 11px;
+            }
+
+            .play-overlay .play-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
+
+            .toolbar {
+                padding: 0 12px 4px;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>♪ PJSK Player</h1>
@@ -353,7 +500,10 @@
     </div>
     <div class="toolbar">
         <button class="filter-btn" id="filterBtn" onclick="togglePopup()" title="筛选与排序">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />
+            </svg>
         </button>
         <div class="filter-popup" id="filterPopup">
             <div class="popup-title">筛选与排序</div>
@@ -389,125 +539,125 @@
     </div>
     <div class="song-grid" id="songGrid"></div>
     <script>
-    // ═══════════════════════════════════════════════════════════
-    // 从 songs.json 加载歌曲库
-    // ═══════════════════════════════════════════════════════════
-    let songs = [];
-    let sortBy = 'id';
-    let sortAsc = true;
+        // ═══════════════════════════════════════════════════════════
+        // 从 songs.json 加载歌曲库
+        // ═══════════════════════════════════════════════════════════
+        let songs = [];
+        let sortBy = 'id';
+        let sortAsc = true;
 
-    const LRC_IDS = new Set(['19','60','61','66','90']);
+        const LRC_IDS = new Set(['19', '60', '61', '66', '90']);
 
-    function getSongBadge(s) {
-        const audioOk = !!(s.neteaseId);
-        const lyricOk = LRC_IDS.has(s.id);
-        if (audioOk && lyricOk) return 'complete';
-        if (audioOk) return 'no-lyrics';
-        return 'unavailable';
-    }
+        function getSongBadge(s) {
+            const audioOk = !!(s.neteaseId);
+            const lyricOk = LRC_IDS.has(s.id);
+            if (audioOk && lyricOk) return 'complete';
+            if (audioOk) return 'no-lyrics';
+            return 'unavailable';
+        }
 
-    function getFilteredSongs() {
-        const fComp = document.getElementById('filterComplete').checked;
-        const fNoLrc = document.getElementById('filterNoLyrics').checked;
-        const fUnav = document.getElementById('filterUnavailable').checked;
-        return songs.filter(s => {
-            const badge = getSongBadge(s);
-            if (badge === 'complete' && !fComp) return false;
-            if (badge === 'no-lyrics' && !fNoLrc) return false;
-            if (badge === 'unavailable' && !fUnav) return false;
-            return true;
-        });
-    }
+        function getFilteredSongs() {
+            const fComp = document.getElementById('filterComplete').checked;
+            const fNoLrc = document.getElementById('filterNoLyrics').checked;
+            const fUnav = document.getElementById('filterUnavailable').checked;
+            return songs.filter(s => {
+                const badge = getSongBadge(s);
+                if (badge === 'complete' && !fComp) return false;
+                if (badge === 'no-lyrics' && !fNoLrc) return false;
+                if (badge === 'unavailable' && !fUnav) return false;
+                return true;
+            });
+        }
 
-    function getSortedSongs(list) {
-        const sorted = [...list];
-        sorted.sort((a, b) => {
-            let cmp;
-            if (sortBy === 'id') {
-                cmp = parseInt(a.id, 10) - parseInt(b.id, 10);
-            } else {
-                cmp = (a.title || '').localeCompare(b.title || '', 'zh-CN');
+        function getSortedSongs(list) {
+            const sorted = [...list];
+            sorted.sort((a, b) => {
+                let cmp;
+                if (sortBy === 'id') {
+                    cmp = parseInt(a.id, 10) - parseInt(b.id, 10);
+                } else {
+                    cmp = (a.title || '').localeCompare(b.title || '', 'zh-CN');
+                }
+                return sortAsc ? cmp : -cmp;
+            });
+            return sorted;
+        }
+
+        function updateSortUI() {
+            document.querySelectorAll('.sort-option').forEach(el => {
+                const val = el.dataset.sort;
+                const isActive = val === sortBy;
+                el.classList.toggle('active', isActive);
+                const arrow = el.querySelector('.sort-arrow');
+                if (arrow) arrow.textContent = isActive ? (sortAsc ? '▲' : '▼') : '';
+            });
+        }
+
+        async function loadSongs() {
+            try {
+                const response = await fetch('songs.json');
+                songs = await response.json();
+                render();
+            } catch (error) {
+                console.error('加载失败:', error);
+                renderError('无法加载 songs.json');
             }
-            return sortAsc ? cmp : -cmp;
-        });
-        return sorted;
-    }
+        }
 
-    function updateSortUI() {
-        document.querySelectorAll('.sort-option').forEach(el => {
-            const val = el.dataset.sort;
-            const isActive = val === sortBy;
-            el.classList.toggle('active', isActive);
-            const arrow = el.querySelector('.sort-arrow');
-            if (arrow) arrow.textContent = isActive ? (sortAsc ? '▲' : '▼') : '';
-        });
-    }
+        function togglePopup() {
+            document.getElementById('filterPopup').classList.toggle('open');
+        }
 
-    async function loadSongs() {
-        try {
-            const response = await fetch('songs.json');
-            songs = await response.json();
+        function closePopup() {
+            document.getElementById('filterPopup').classList.remove('open');
+        }
+
+        function onFilterChange() {
             render();
-        } catch (error) {
-            console.error('加载失败:', error);
-            renderError('无法加载 songs.json');
         }
-    }
 
-    function togglePopup() {
-        document.getElementById('filterPopup').classList.toggle('open');
-    }
-
-    function closePopup() {
-        document.getElementById('filterPopup').classList.remove('open');
-    }
-
-    function onFilterChange() {
-        render();
-    }
-
-    function onSortClick(field) {
-        if (sortBy === field) {
-            sortAsc = !sortAsc;
-        } else {
-            sortBy = field;
-            sortAsc = true;
+        function onSortClick(field) {
+            if (sortBy === field) {
+                sortAsc = !sortAsc;
+            } else {
+                sortBy = field;
+                sortAsc = true;
+            }
+            updateSortUI();
+            render();
         }
-        updateSortUI();
-        render();
-    }
 
-    // ═══════════════════════════════════════════════════════════
-    // 渲染封面墙
-    // ═══════════════════════════════════════════════════════════
-    function render() {
-        const grid = document.getElementById('songGrid');
-        const filtered = getFilteredSongs();
-        const sorted = getSortedSongs(filtered);
-        document.getElementById('songCount').textContent = `显示 ${sorted.length} 首 | 共 ${songs.length} 首`;
+        // ═══════════════════════════════════════════════════════════
+        // 渲染封面墙
+        // ═══════════════════════════════════════════════════════════
+        function render() {
+            const grid = document.getElementById('songGrid');
+            const filtered = getFilteredSongs();
+            const sorted = getSortedSongs(filtered);
+            document.getElementById('songCount').textContent = `显示 ${sorted.length} 首 | 共 ${songs.length} 首`;
 
-        if (sorted.length === 0) {
-            grid.innerHTML = `
+            if (sorted.length === 0) {
+                grid.innerHTML = `
                 <div class="empty-state">
                     <div class="icon">🔍</div>
                     <h3>没有符合条件的歌曲</h3>
                     <p>请调整筛选条件</p>
                 </div>`;
-            return;
-        }
+                return;
+            }
 
-        let html = '';
-        sorted.forEach((s, i) => {
-            const badgeType = getSongBadge(s);
-            let badgeHtml;
-            if (badgeType === 'complete') badgeHtml = '<span class="card-badge perfect">完整</span>';
-            else if (badgeType === 'no-lyrics') badgeHtml = '<span class="card-badge ok">无歌词</span>';
-            else badgeHtml = '<span class="card-badge missing">不可用</span>';
+            let html = '';
+            sorted.forEach((s, i) => {
+                const badgeType = getSongBadge(s);
+                let badgeHtml;
+                if (badgeType === 'complete') badgeHtml = '<span class="card-badge perfect">完整</span>';
+                else if (badgeType === 'no-lyrics') badgeHtml = '<span class="card-badge ok">无歌词</span>';
+                else badgeHtml = '<span class="card-badge missing">不可用</span>';
 
-            const coverInner = s.cover
-                ? `<img src="${s.cover}" alt="${s.title}" loading="lazy" />`
-                : `<span style="font-size:40px;opacity:0.3;">🎵</span>`;
-            html += `
+                const coverInner = s.cover
+                    ? `<img src="${s.cover}" alt="${s.title}" loading="lazy" />`
+                    : `<span style="font-size:40px;opacity:0.3;">🎵</span>`;
+                html += `
                 <div class="song-card" onclick="playSong('${s.id}')" style="animation-delay:${i * 0.04}s">
                     <div class="card-cover">
                         ${coverInner}
@@ -519,54 +669,55 @@
                         <div class="card-badges">${badgeHtml}</div>
                     </div>
                 </div>`;
-        });
-        grid.innerHTML = html;
-        grid.classList.add('loading');
-    }
+            });
+            grid.innerHTML = html;
+            grid.classList.add('loading');
+        }
 
-    function renderError(message) {
-        const grid = document.getElementById('songGrid');
-        grid.innerHTML = `
+        function renderError(message) {
+            const grid = document.getElementById('songGrid');
+            grid.innerHTML = `
             <div class="empty-state" style="color:#e55;">
                 <div class="icon">⚠️</div>
                 <h3>加载失败</h3>
                 <p>${message}</p>
                 <p style="margin-top:12px;font-size:13px;color:#888;">请确保 <code>songs.json</code> 存在且格式正确</p>
             </div>`;
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    // 点击歌曲 → 跳转播放器
-    // ═══════════════════════════════════════════════════════════
-    function playSong(id) {
-        const song = songs.find(s => s.id === id);
-        if (!song) { alert('歌曲数据未找到'); return; }
-        const NETBASE = 'http://music.163.com/song/media/outer/url?id=';
-        if (!song.neteaseId) { alert('该歌曲尚未配置音频文件'); return; }
-
-        const data = {
-            title: song.title || '',
-            artist: song.artist || '',
-            coverUrl: song.cover || '',
-            audioUrl: NETBASE + song.neteaseId + '.mp3',
-            lrcText: '',
-        };
-        localStorage.setItem('pjsk_song_' + id, JSON.stringify(data));
-        window.location.href = 'player.html?id=' + encodeURIComponent(id);
-    }
-
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closePopup();
-    });
-    document.addEventListener('click', e => {
-        const popup = document.getElementById('filterPopup');
-        const btn = document.getElementById('filterBtn');
-        if (popup.classList.contains('open') && !popup.contains(e.target) && !btn.contains(e.target)) {
-            closePopup();
         }
-    });
 
-    loadSongs();
+        // ═══════════════════════════════════════════════════════════
+        // 点击歌曲 → 跳转播放器
+        // ═══════════════════════════════════════════════════════════
+        function playSong(id) {
+            const song = songs.find(s => s.id === id);
+            if (!song) { alert('歌曲数据未找到'); return; }
+            const NETBASE = 'http://music.163.com/song/media/outer/url?id=';
+            if (!song.neteaseId) { alert('该歌曲尚未配置音频文件'); return; }
+
+            const data = {
+                title: song.title || '',
+                artist: song.artist || '',
+                coverUrl: song.cover || '',
+                audioUrl: NETBASE + song.neteaseId + '.mp3',
+                lrcText: '',
+            };
+            localStorage.setItem('pjsk_song_' + id, JSON.stringify(data));
+            window.location.href = 'player.html?id=' + encodeURIComponent(id);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closePopup();
+        });
+        document.addEventListener('click', e => {
+            const popup = document.getElementById('filterPopup');
+            const btn = document.getElementById('filterBtn');
+            if (popup.classList.contains('open') && !popup.contains(e.target) && !btn.contains(e.target)) {
+                closePopup();
+            }
+        });
+
+        loadSongs();
     </script>
 </body>
+
 </html>

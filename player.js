@@ -21,16 +21,16 @@ createApp({
         //     虚拟歌手           : 21=初音未来, 22=镜音铃, 23=镜音连, 24=巡音流歌, 25=MEIKO, 26=KAITO
         //
         const avatars = {
-            "宵崎奏":   "chara_icons/chr_ts_17.png",
+            "宵崎奏": "chara_icons/chr_ts_17.png",
             "朝比奈真冬": "chara_icons/chr_ts_18.png",
-            "东云绘名":  "chara_icons/chr_ts_19.png",
-            "晓山瑞希":  "chara_icons/chr_ts_20.png",
+            "东云绘名": "chara_icons/chr_ts_19.png",
+            "晓山瑞希": "chara_icons/chr_ts_20.png",
             "初音未来": "chara_icons/chr_ts_21_6.png",
-            "镜音铃":  "chara_icons/chr_ts_22.png",
-            "镜音连":  "chara_icons/chr_ts_23.png",
+            "镜音铃": "chara_icons/chr_ts_22.png",
+            "镜音连": "chara_icons/chr_ts_23.png",
             "巡音流歌": "chara_icons/chr_ts_24.png",
-            "MEIKO":  "chara_icons/chr_ts_25.png",
-            "KAITO":  "chara_icons/chr_ts_26.png",
+            "MEIKO": "chara_icons/chr_ts_25.png",
+            "KAITO": "chara_icons/chr_ts_26.png",
         };
         const defaultColor = '#884499';
 
@@ -121,7 +121,7 @@ createApp({
                 nextTick(() => {
                     const audio = audioPlayer.value;
                     if (audio) {
-                        audio.play().catch(() => {});
+                        audio.play().catch(() => { });
                     }
                 });
             }
@@ -207,7 +207,7 @@ createApp({
                     const segments = [];
                     for (let i = 0; i < segMatch.length; i++) {
                         const segId = segMatch[i][1];
-                        const endIdx = i + 1 < segMatch.length ? segMatch[i+1].index : rest.length;
+                        const endIdx = i + 1 < segMatch.length ? segMatch[i + 1].index : rest.length;
                         const segText = rest.substring(segMatch[i].index + segMatch[i][0].length, endIdx).trim();
                         if (!segText) continue;
                         const cv = dc.colors ? (dc.colors[segId] || defaultColor) : defaultColor;
@@ -287,7 +287,7 @@ createApp({
             const audio = audioPlayer.value;
             if (!audio) return;
             if (audio.paused) {
-                audio.play().catch(() => {});
+                audio.play().catch(() => { });
             } else {
                 audio.pause();
             }
@@ -385,7 +385,7 @@ createApp({
             const audio = audioPlayer.value;
             if (!audio || t == null) return;
             audio.currentTime = t;
-            audio.play().catch(() => {});
+            audio.play().catch(() => { });
         }
 
         // ═══════════════════════════════════════════
