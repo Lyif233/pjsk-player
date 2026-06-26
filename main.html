@@ -484,7 +484,7 @@
         const grid = document.getElementById('songGrid');
         const filtered = getFilteredSongs();
         const sorted = getSortedSongs(filtered);
-        document.getElementById('songCount').textContent = `共 ${songs.length} 首（显示 ${sorted.length} 首）`;
+        document.getElementById('songCount').textContent = `显示 ${sorted.length} 首 | 共 ${songs.length} 首`;
 
         if (sorted.length === 0) {
             grid.innerHTML = `

@@ -139,32 +139,42 @@ createApp({
 
             // 合并多个 ID 的所有角色名（去重）。合唱 ID 自动含前面所有角色
             function mergeCharas(ids, dc) {
-                const names = new Set();
+                const nameMap = new Map(); // name -> color
                 const chorusId = dc._chorusId;
                 ids.forEach(id => {
-                    if (id === chorusId) {
-                        // 合唱：取 chorusId 之前所有 ID 的角色
-                        Object.keys(dc.charas || {}).forEach(k => {
+                    const charasList = id === chorusId
+                        ? Object.keys(dc.charas || {}).reduce((acc, k) => {
                             if (parseInt(k) < parseInt(chorusId)) {
-                                (dc.charas?.[k] || []).forEach(n => names.add(n.replace(/\(.*?\)\s*$/, '')));
+                                acc.push(...(dc.charas?.[k] || []));
                             }
-                        });
-                    } else {
-                        (dc.charas?.[id] || []).forEach(n => names.add(n.replace(/\(.*?\)\s*$/, '')));
-                    }
+                            return acc;
+                        }, [])
+                        : (dc.charas?.[id] || []);
+                    const colorList = id === chorusId
+                        ? Object.keys(dc.charas || {}).reduce((acc, k) => {
+                            if (parseInt(k) < parseInt(chorusId)) {
+                                acc.push(...(dc.charColors?.[k] || []));
+                            }
+                            return acc;
+                        }, [])
+                        : (dc.charColors?.[id] || []);
+                    charasList.forEach((n, i) => {
+                        const name = n.replace(/\(.*?\)\s*$/, '');
+                        if (!nameMap.has(name)) {
+                            nameMap.set(name, colorList[i] || '');
+                        }
+                    });
                 });
-                const arr = [...names];
-                const colors = ids.length > 0
-                    ? arr.map(() => '')
-                    : [];
-                return { chars: arr, charColors: colors };
+                const chars = [...nameMap.keys()];
+                const charColors = chars.map(name => nameMap.get(name));
+                return { chars, charColors };
             }
 
             lines.forEach(line => {
                 const m = line.match(lineRegex);
                 if (!m) return;
 
-                const time = parseInt(m[1], 10) * 60 + parseFloat(m[2]) - 0.35; // 提前 350ms
+                const time = parseInt(m[1], 10) * 60 + parseFloat(m[2]) - 0.4; // 提前 400ms
                 const rest = m[3].trim();
                 if (!rest) { result.push({ time, text: '', isGap: true }); lastIdSet = new Set(); return; }
 
@@ -246,8 +256,13 @@ createApp({
                     result.charas[id] = names;
                     if (names.length === 1) {
                         result.charColors[id] = [color];
+                    } else if (c.startsWith('lg(')) {
+                        // 从 lg(#c1, #c2, ...) 中提取各角色对应的颜色
+                        const inner = c.replace(/^lg\(/, '').replace(/\)$/, '');
+                        const lgColors = inner.split(',').map(s => s.trim());
+                        result.charColors[id] = names.map((_, i) => lgColors[i] || '');
                     } else {
-                        result.charColors[id] = names.map(() => '');
+                        result.charColors[id] = names.map(() => color);
                     }
                 }
             });
@@ -387,6 +402,9 @@ createApp({
                     e.preventDefault();
                     e.stopPropagation();
                     togglePlay();
+                } else if (e.code === 'Escape') {
+                    e.preventDefault();
+                    window.location.href = 'main.html';
                 } else if (e.code === 'ArrowLeft') {
                     e.preventDefault();
                     audio.currentTime = Math.max(0, audio.currentTime - 5);

@@ -246,6 +246,10 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .lyric-text.lyric-seg {
+            display: inline-block;
+            word-break: break-word;
+        }
         .gradient-char {
             -webkit-background-clip: text;
             background-clip: text;

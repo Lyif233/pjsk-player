@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PJSK Player</title>
     <script>
+        // 不带 id 参数则自动重定向到首页
+        if (!(new URLSearchParams(location.search)).has('id')) {
+            window.location.replace('main.html');
+        }
         if (location.search.includes('demo')) {
             document.documentElement.classList.add('demo');
         }
@@ -68,12 +72,18 @@
 
                         <template v-if="line.segments">
                             <span v-for="(seg, si) in line.segments"
-                                  class="lyric-text"
+                                  class="lyric-text lyric-seg"
                                   :class="{ 'gradient-text': seg.isGradient }"
                                   :style="seg.isGradient
                                     ? { backgroundImage: seg.color }
-                                    : { color: seg.color }"
-                                  style="display:inline;">{{ seg.text }}&thinsp;</span>
+                                    : { color: seg.color }">
+                                <template v-if="seg.isGradient">
+                                    <span v-for="(ch, ci) in [...seg.text]" :key="ci"
+                                          class="gradient-char"
+                                          :style="{ backgroundImage: seg.color }">{{ ch }}</span>
+                                </template>
+                                <template v-else>{{ seg.text }}&thinsp;</template>
+                            </span>
                         </template>
                         <template v-else>
                         <div class="lyric-text"
