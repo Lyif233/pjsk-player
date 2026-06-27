@@ -2,24 +2,6 @@ const { createApp, ref, nextTick, onMounted } = Vue;
 
 createApp({
     setup() {
-        // ═══════════════════════════════════════════
-        // 配置（仅头像 URL，角色映射由用户提供）
-        // ═══════════════════════════════════════════
-        //
-        // TODO: 支持其他《世界计划》团体
-        //   想切换团体时，只需改这里：
-        //     1. avatars → 对应团体的角色名和 chr_ts_XX 编号
-        //     2. defaultColor → 对应团体的主题色
-        //     3. CSS 中 :root { --theme: ... } → 对应团体的主题色
-        //
-        //   团体角色 chr_ts_ 编号速查：
-        //     Leo/need          : 1=星乃一歌, 2=天马咲希, 3=望月穗波, 4=日野森志步
-        //     MORE MORE JUMP!   : 5=花里实乃理, 6=桐谷遥, 7=桃井爱莉, 8=日野森雫
-        //     Vivid BAD SQUAD   : 9=小豆泽心羽, 10=白石杏, 11=东云彰人, 12=青柳冬弥
-        //     Wonderlands×Showtime: 13=天马司, 14=凤笑梦, 15=草薙宁宁, 16=神代类
-        //     25時、ナイトコードで。: 17=宵崎奏, 18=朝比奈真冬, 19=东云绘名, 20=晓山瑞希
-        //     虚拟歌手           : 21=初音未来, 22=镜音铃, 23=镜音连, 24=巡音流歌, 25=MEIKO, 26=KAITO
-        //
         const avatars = {
             "宵崎奏": "chara_icons/chr_ts_17.png",
             "朝比奈真冬": "chara_icons/chr_ts_18.png",
@@ -32,15 +14,7 @@ createApp({
             "MEIKO": "chara_icons/chr_ts_25.png",
             "KAITO": "chara_icons/chr_ts_26.png",
         };
-        const defaultColor = '#884499';
-
-        // ═══════════════════════════════════════════
-        // xlrc
-        // ═══════════════════════════════════════════
-
-        // ═══════════════════════════════════════════
-        // 状态
-        // ═══════════════════════════════════════════
+        const themeColor = '#884499';
         const launched = ref(true);
         const songTitle = ref('');
         const songArtist = ref('');
@@ -62,9 +36,7 @@ createApp({
         const dynamicConfig = ref(null); // { colors: {}, charas: {}, charColors: {} } 覆盖
         const configReady = ref(false);
 
-        // ═══════════════════════════════════════════
         // 从 localStorage / lyrics/[id].xlrc 自动加载
-        // ═══════════════════════════════════════════
         (async function autoLoad() {
             const params = new URLSearchParams(window.location.search);
             const songId = params.get('id');
@@ -115,21 +87,19 @@ createApp({
                 });
             }
 
-            // 5) 自动播放
+            // 5) 自动播放（浏览器可能阻止，静默失败即可）
             if (audioSrc.value) {
                 audioLoaded.value = true;
                 nextTick(() => {
                     const audio = audioPlayer.value;
                     if (audio) {
-                        audio.play().catch(() => { });
+                        audio.play().then(() => isPlaying.value = true).catch(() => { });
                     }
                 });
             }
         })();
 
-        // ═══════════════════════════════════════════
         // 解析 xlrc（@ID 已内联）
-        // ═══════════════════════════════════════════
         function parsexlrc() {
             const lineRegex = /\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/;
             const idRegex = /@(\d+)/g;
@@ -188,14 +158,15 @@ createApp({
                     effectiveIds = [...new Set(segMatch.map(s => s[1]))];
                 }
 
-                const idSetKey = effectiveIds.sort().join(',');
+                const sortedIds = [...effectiveIds].sort();
+                const idSetKey = sortedIds.join(',');
                 const showAvatar = idSetKey !== [...lastIdSet].sort().join(',');
                 lastIdSet = new Set(effectiveIds);
 
                 if (segMatch.length <= 1) {
                     const effectiveId = effectiveIds[0];
                     const text = segMatch.length === 1 ? rest.replace(/@\d+/g, '').trim() : rest;
-                    const colorValue = dc.colors ? (dc.colors[effectiveId] || defaultColor) : defaultColor;
+                    const colorValue = dc.colors ? (dc.colors[effectiveId] || themeColor) : themeColor;
                     const merged = mergeCharas(effectiveIds, dc);
                     result.push({
                         time, text, id: effectiveId,
@@ -210,12 +181,12 @@ createApp({
                         const endIdx = i + 1 < segMatch.length ? segMatch[i + 1].index : rest.length;
                         const segText = rest.substring(segMatch[i].index + segMatch[i][0].length, endIdx).trim();
                         if (!segText) continue;
-                        const cv = dc.colors ? (dc.colors[segId] || defaultColor) : defaultColor;
+                        const cv = dc.colors ? (dc.colors[segId] || themeColor) : themeColor;
                         segments.push({ text: segText, id: segId, color: cv, isGradient: typeof cv === 'string' && cv.startsWith('linear-gradient') });
                     }
                     const merged = mergeCharas(effectiveIds, dc);
                     const fullText = rest.replace(/@\d+/g, '').trim();
-                    const firstColor = segments[0]?.color || defaultColor;
+                    const firstColor = segments[0]?.color || themeColor;
                     result.push({
                         time, text: fullText, segments,
                         id: effectiveIds[0], showAvatar,
@@ -229,9 +200,7 @@ createApp({
             parsedLyrics.value = result;
         }
 
-        // ═══════════════════════════════════════════
         // 歌词头部解析（|colors= / |charas=）
-        // ═══════════════════════════════════════════
         function tryParseHeaders(text) {
             const colorsMatch = text.match(/^\|colors=\s*(.+)$/m);
             const charasMatch = text.match(/^\|charas=\s*(.+)$/m);
@@ -272,9 +241,7 @@ createApp({
             return true;
         }
 
-        // ═══════════════════════════════════════════
         // 工具
-        // ═══════════════════════════════════════════
         function formatTime(s) {
             if (!s || !isFinite(s)) return '0:00';
             const m = Math.floor(s / 60);
@@ -388,9 +355,7 @@ createApp({
             audio.play().catch(() => { });
         }
 
-        // ═══════════════════════════════════════════
         // 键盘控制
-        // ═══════════════════════════════════════════
         onMounted(() => {
             document.addEventListener('keydown', (e) => {
                 const tag = e.target.tagName;

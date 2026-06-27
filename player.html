@@ -73,9 +73,7 @@
                                 <template v-if="line.segments">
                                     <div class="lyric-text">
                                         <span v-for="(seg, si) in line.segments" class="lyric-seg"
-                                            :class="{ 'gradient-text': seg.isGradient }" :style="seg.isGradient
-                                        ? { backgroundImage: seg.color }
-                                        : { color: seg.color }">
+                                            :style="seg.isGradient ? {} : { color: seg.color }">
                                             <template v-if="seg.isGradient">
                                                 <span v-for="(ch, ci) in [...seg.text]" :key="ci" class="gradient-char"
                                                     :style="{ backgroundImage: seg.color }">{{ ch }}</span>

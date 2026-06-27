@@ -275,9 +275,9 @@ body::before {
     transition: transform 0.5s ease;
 }
 
-/* 非激活行视觉缩小到 32px 效果（不影响布局） */
+/* 非激活行视觉缩小到 36px 效果（不影响布局） */
 .lyric-line:not(.active) .lyric-text {
-    transform: scale(0.8);
+    transform: scale(0.9);
 }
 
 .lyric-text.gradient-text {
