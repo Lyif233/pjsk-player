@@ -8,7 +8,7 @@
     <script>
         // 不带 id 参数则自动重定向到首页
         if (!(new URLSearchParams(location.search)).has('id')) {
-            window.location.replace('main.html');
+            window.location.replace('index.html');
         }
         if (location.search.includes('demo')) {
             document.documentElement.classList.add('demo');

@@ -42,7 +42,7 @@ createApp({
             const songId = params.get('id');
             if (!songId) return;
 
-            // 1) 优先从 localStorage 读取（由 main.html 跳转触发）
+            // 1) 优先从 localStorage 读取（由 index.html 跳转触发）
             const raw = localStorage.getItem('pjsk_song_' + songId);
             if (raw) {
                 try {
@@ -369,7 +369,7 @@ createApp({
                     togglePlay();
                 } else if (e.code === 'Escape') {
                     e.preventDefault();
-                    window.location.href = 'main.html';
+                    window.location.href = 'index.html';
                 } else if (e.code === 'ArrowLeft') {
                     e.preventDefault();
                     audio.currentTime = Math.max(0, audio.currentTime - 5);

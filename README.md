@@ -25,20 +25,20 @@
 ## 🚀 快速开始
 
 1. 将项目放在任意静态服务器下（如 Nginx、Python http.server 等）
-2. 打开 `main.html` 浏览歌曲库
+2. 打开 `index.html` 浏览歌曲库
 3. 点击封面进入播放器
 
 ```bash
 # 示例：Python 本地服务器
 python -m http.server 8080
-# 然后访问 http://localhost:8080/main.html
+# 然后访问 http://localhost:8080/index.html
 ```
 
 ## 📁 项目结构
 
 ```text
 PJSK Player/
-├── main.html          # 歌曲库浏览页
+├── index.html          # 歌曲库浏览页
 ├── player.html        # 播放器页面（Vue 3）
 ├── player.js          # 播放器逻辑
 ├── player.css         # 播放器样式
