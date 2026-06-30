@@ -23,6 +23,13 @@
 
         <!-- ═══ 播放器 ═══ -->
         <div class="player" v-if="launched">
+            <!-- 竖屏播放按钮 -->
+            <div class="mobile-play-btn" v-if="!isPlaying" @click="togglePlay">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M8 5v14l11-7z"/>
+                </svg>
+            </div>
+
             <!-- 左侧 -->
             <div class="left-panel">
                 <div class="cover-art">

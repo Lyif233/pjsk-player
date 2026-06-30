@@ -87,15 +87,9 @@ createApp({
                 });
             }
 
-            // 5) 自动播放（浏览器可能阻止，静默失败即可）
+            // 5) 准备音频（不再自动播放）
             if (audioSrc.value) {
                 audioLoaded.value = true;
-                nextTick(() => {
-                    const audio = audioPlayer.value;
-                    if (audio) {
-                        audio.play().then(() => isPlaying.value = true).catch(() => { });
-                    }
-                });
             }
         })();
 
@@ -254,9 +248,10 @@ createApp({
             const audio = audioPlayer.value;
             if (!audio) return;
             if (audio.paused) {
-                audio.play().catch(() => { });
+                audio.play().then(() => isPlaying.value = true).catch(() => { });
             } else {
                 audio.pause();
+                isPlaying.value = false;
             }
         }
         function onAudioError() {
