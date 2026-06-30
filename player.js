@@ -15,28 +15,34 @@ createApp({
             "KAITO": "chara_icons/chr_ts_26.png",
         };
         const themeColor = '#884499';
+        
+        // 响应式状态定义
         const launched = ref(true);
         const songTitle = ref('');
         const songArtist = ref('');
         const coverUrl = ref('');
         const audioSrc = ref('');
-        const parsedLyrics = ref([]);
-        const currentIndex = ref(-1);
-        const currentTime = ref(0);
-        const duration = ref(0);
-        const progressPercent = ref(0);
-        const isPlaying = ref(false);
-        const audioLoaded = ref(false);
-        const audioError = ref('');
+        const parsedLyrics = ref([]); // 解析后的歌词数组
+        const currentIndex = ref(-1); // 当前高亮的歌词行索引
+        const currentTime = ref(0);   // 当前播放时间
+        const duration = ref(0);      // 音频总时长
+        const progressPercent = ref(0); // 播放进度百分比
+        const isPlaying = ref(false); // 播放状态
+        const audioLoaded = ref(false); // 音频是否加载完成
+        const audioError = ref('');   // 音频加载错误信息
 
+        // DOM 引用
         const audioPlayer = ref(null);
         const lyricsBox = ref(null);
 
-        const xlrcText = ref('');
-        const dynamicConfig = ref(null); // { colors: {}, charas: {}, charColors: {} } 覆盖
-        const configReady = ref(false);
+        const xlrcText = ref(''); // 原始歌词文本
+        const dynamicConfig = ref(null); // 动态配置：{ colors: {}, charas: {}, charColors: {} } 覆盖
+        const configReady = ref(false); // 配置是否准备就绪
 
-        // 从 localStorage / lyrics/[id].xlrc 自动加载
+        /**
+         * 自动加载歌曲数据
+         * 从 localStorage 或 lyrics/[id].xlrc 加载
+         */
         (async function autoLoad() {
             const params = new URLSearchParams(window.location.search);
             const songId = params.get('id');
@@ -93,7 +99,10 @@ createApp({
             }
         })();
 
-        // 解析 xlrc（@ID 已内联）
+        /**
+         * 解析 xlrc 歌词文本
+         * 将原始文本解析为包含时间、文本、角色、颜色等信息的对象数组
+         */
         function parsexlrc() {
             const lineRegex = /\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/;
             const idRegex = /@(\d+)/g;
@@ -101,7 +110,13 @@ createApp({
             let lastIdSet = new Set();
             const result = [];
 
-            // 合并多个 ID 的所有角色名（去重）。合唱 ID 自动含前面所有角色
+            /**
+             * 合并多个 ID 的所有角色名（去重）
+             * 合唱 ID 自动包含前面所有角色
+             * @param {Array} ids 角色 ID 数组
+             * @param {Object} dc 动态配置对象
+             * @returns {Object} 包含角色名数组和对应颜色数组的对象
+             */
             function mergeCharas(ids, dc) {
                 const nameMap = new Map(); // name -> color
                 const chorusId = dc._chorusId;
@@ -194,7 +209,11 @@ createApp({
             parsedLyrics.value = result;
         }
 
-        // 歌词头部解析（|colors= / |charas=）
+        /**
+         * 尝试解析歌词头部的配置信息（|colors= 和 |charas=）
+         * @param {string} text 原始歌词文本
+         * @returns {boolean} 是否成功解析
+         */
         function tryParseHeaders(text) {
             const colorsMatch = text.match(/^\|colors=\s*(.+)$/m);
             const charasMatch = text.match(/^\|charas=\s*(.+)$/m);
@@ -235,7 +254,13 @@ createApp({
             return true;
         }
 
-        // 工具
+        // 工具函数
+        
+        /**
+         * 格式化时间（秒 -> mm:ss）
+         * @param {number} s 秒数
+         * @returns {string} 格式化后的时间字符串
+         */
         function formatTime(s) {
             if (!s || !isFinite(s)) return '0:00';
             const m = Math.floor(s / 60);
@@ -243,7 +268,9 @@ createApp({
             return m + ':' + sec;
         }
 
-
+        /**
+         * 切换播放/暂停状态
+         */
         function togglePlay() {
             const audio = audioPlayer.value;
             if (!audio) return;
@@ -254,15 +281,27 @@ createApp({
                 isPlaying.value = false;
             }
         }
+        
+        /**
+         * 音频加载错误回调
+         */
         function onAudioError() {
             audioError.value = '音频加载失败，请手动选择本地文件';
             audioLoaded.value = false;
         }
+        
+        /**
+         * 音频元数据加载完成回调
+         */
         function onLoadedMeta() {
             const audio = audioPlayer.value;
             if (audio) { duration.value = audio.duration; audioLoaded.value = true; audioError.value = ''; }
         }
 
+        /**
+         * 音频播放时间更新回调
+         * 更新进度条和当前高亮的歌词行
+         */
         function onTimeUpdate() {
             const audio = audioPlayer.value;
             if (!audio) return;
@@ -295,10 +334,16 @@ createApp({
             }
         }
 
+        /**
+         * 音频播放结束回调
+         */
         function onEnded() {
             progressPercent.value = 100;
         }
 
+        /**
+         * 滚动到当前高亮的歌词行
+         */
         function scrollToCurrent() {
             nextTick(() => {
                 const el = getLineEl(currentIndex.value);
@@ -306,6 +351,11 @@ createApp({
                 centerLine(el);
             });
         }
+        
+        /**
+         * 滚动到指定索引的歌词行
+         * @param {number} n 歌词行索引
+         */
         function scrollToIndex(n) {
             nextTick(() => {
                 const el = getLineEl(n);
@@ -313,11 +363,22 @@ createApp({
                 centerLine(el);
             });
         }
+        
+        /**
+         * 获取指定索引的歌词行 DOM 元素
+         * @param {number} idx 歌词行索引
+         * @returns {HTMLElement|null} 歌词行 DOM 元素
+         */
         function getLineEl(idx) {
             const box = lyricsBox.value;
             if (!box || idx < 0) return null;
             return box.querySelectorAll('.lyric-line')[idx];
         }
+        
+        /**
+         * 将指定的歌词行 DOM 元素居中显示
+         * @param {HTMLElement} el 歌词行 DOM 元素
+         */
         function centerLine(el) {
             const box = lyricsBox.value;
             if (!box) return;
@@ -328,6 +389,10 @@ createApp({
             box.scrollTo({ top: targetTop, behavior: 'smooth' });
         }
 
+        /**
+         * 点击进度条跳转播放进度
+         * @param {MouseEvent} e 鼠标点击事件
+         */
         function seekAudio(e) {
             const bar = e.currentTarget;
             const rect = bar.getBoundingClientRect();
@@ -338,11 +403,19 @@ createApp({
             }
         }
 
+        /**
+         * 跳转到指定时间
+         * @param {number} t 目标时间（秒）
+         */
         function seekTo(t) {
             const audio = audioPlayer.value;
             if (audio && t != null) audio.currentTime = t;
         }
 
+        /**
+         * 从指定时间开始播放
+         * @param {number} t 目标时间（秒）
+         */
         function playFrom(t) {
             const audio = audioPlayer.value;
             if (!audio || t == null) return;

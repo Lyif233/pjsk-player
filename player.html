@@ -30,7 +30,7 @@
                 </svg>
             </div>
 
-            <!-- 左侧 -->
+            <!-- 左侧：封面、歌曲信息、进度条、控制按钮 -->
             <div class="left-panel">
                 <div class="cover-art">
                     <img v-if="coverUrl" :src="coverUrl" alt="Cover" />
@@ -55,21 +55,24 @@
                 </div>
             </div>
 
-            <!-- 右侧：歌词 -->
+            <!-- 右侧：歌词滚动区域 -->
             <div class="right-panel">
                 <div class="lyrics-scroll" ref="lyricsBox">
                     <div class="focus-line"></div>
+                    <!-- 无歌词提示 -->
                     <div class="no-lyrics" v-if="parsedLyrics.length === 0 && audioSrc">
                         <div class="nl-text">暂无歌词</div>
                     </div>
+                    <!-- 歌词内容 -->
                     <div class="lyrics-inner" v-else>
                         <div v-for="(line, index) in parsedLyrics" :key="index"
-                            :class="['lyric-line', { active: currentIndex === index }]"
+                            :class="['lyric-line', { active: currentIndex === index }]" 
                             @click="!line.isGap && playFrom(line.time)">
 
                             <template v-if="line.isGap"></template>
                             <template v-else>
 
+                                <!-- 角色头像 -->
                                 <div class="avatars" v-if="line.showAvatar && line.chars.length">
                                     <div class="avatar-ring" v-for="(ch, ci) in line.chars"
                                         :style="{ '--avatar-color': line.charColors[ci] || '#555' }">
@@ -77,6 +80,7 @@
                                     </div>
                                 </div>
 
+                                <!-- 歌词文本（支持分段着色） -->
                                 <template v-if="line.segments">
                                     <div class="lyric-text">
                                         <span v-for="(seg, si) in line.segments" class="lyric-seg"
@@ -89,6 +93,7 @@
                                         </span>
                                     </div>
                                 </template>
+                                <!-- 歌词文本（单色或渐变） -->
                                 <template v-else>
                                     <div class="lyric-text"
                                         :style="{ color: line.isGradient ? 'transparent' : line.color }">
@@ -109,6 +114,7 @@
             </div>
         </div>
 
+        <!-- 隐藏的音频播放器 -->
         <audio ref="audioPlayer" style="display:none" :src="audioSrc" @timeupdate="onTimeUpdate"
             @loadedmetadata="onLoadedMeta" @ended="onEnded" @error="onAudioError" @play="isPlaying = true"
             @pause="isPlaying = false"></audio>

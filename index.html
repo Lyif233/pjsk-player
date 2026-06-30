@@ -431,7 +431,7 @@
             color: #c084fc;
         }
 
-        /* 加载动画 */
+        /* ── 加载动画 ── */
         .song-grid.loading .song-card {
             opacity: 0;
             animation: fadeUp 0.4s ease forwards;
@@ -449,6 +449,7 @@
             }
         }
 
+        /* ── 响应式布局 ── */
         @media (max-width: 800px) {
             .song-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -549,8 +550,14 @@
         let sortBy = 'id';
         let sortAsc = true;
 
-        const LRC_IDS = new Set(['19', '60', '61', '66', '67', '74', '90', '92']); //有歌词的歌曲
+        // 有歌词的歌曲 ID 集合，用于判断歌曲状态
+        const LRC_IDS = new Set(['19', '60', '61', '66', '67', '74', '90', '92']);
 
+        /**
+         * 获取歌曲的状态徽章类型
+         * @param {Object} s 歌曲对象
+         * @returns {string} 'complete' (完整) | 'no-lyrics' (无歌词) | 'unavailable' (不可用)
+         */
         function getSongBadge(s) {
             const audioOk = !!(s.neteaseId);
             const lyricOk = LRC_IDS.has(s.id);
@@ -559,6 +566,10 @@
             return 'unavailable';
         }
 
+        /**
+         * 获取过滤后的歌曲列表
+         * @returns {Array} 过滤后的歌曲数组
+         */
         function getFilteredSongs() {
             const fComp = document.getElementById('filterComplete').checked;
             const fNoLrc = document.getElementById('filterNoLyrics').checked;
@@ -572,6 +583,11 @@
             });
         }
 
+        /**
+         * 获取排序后的歌曲列表
+         * @param {Array} list 待排序的歌曲数组
+         * @returns {Array} 排序后的歌曲数组
+         */
         function getSortedSongs(list) {
             const sorted = [...list];
             sorted.sort((a, b) => {
@@ -586,6 +602,9 @@
             return sorted;
         }
 
+        /**
+         * 更新排序 UI 状态
+         */
         function updateSortUI() {
             document.querySelectorAll('.sort-option').forEach(el => {
                 const val = el.dataset.sort;
@@ -596,6 +615,9 @@
             });
         }
 
+        /**
+         * 异步加载歌曲数据
+         */
         async function loadSongs() {
             try {
                 const response = await fetch('songs.json');
@@ -607,18 +629,31 @@
             }
         }
 
+        /**
+         * 切换筛选弹出面板的显示状态
+         */
         function togglePopup() {
             document.getElementById('filterPopup').classList.toggle('open');
         }
 
+        /**
+         * 关闭筛选弹出面板
+         */
         function closePopup() {
             document.getElementById('filterPopup').classList.remove('open');
         }
 
+        /**
+         * 筛选条件改变时的回调
+         */
         function onFilterChange() {
             render();
         }
 
+        /**
+         * 排序选项点击时的回调
+         * @param {string} field 排序字段 ('id' 或 'title')
+         */
         function onSortClick(field) {
             if (sortBy === field) {
                 sortAsc = !sortAsc;
@@ -630,7 +665,9 @@
             render();
         }
 
-        // 渲染封面墙
+        /**
+         * 渲染封面墙
+         */
         function render() {
             const grid = document.getElementById('songGrid');
             const filtered = getFilteredSongs();
@@ -675,6 +712,10 @@
             grid.classList.add('loading');
         }
 
+        /**
+         * 渲染错误信息
+         * @param {string} message 错误提示文本
+         */
         function renderError(message) {
             const grid = document.getElementById('songGrid');
             grid.innerHTML = `
@@ -686,7 +727,10 @@
             </div>`;
         }
 
-        // 点击歌曲 跳转播放器
+        /**
+         * 点击歌曲卡片，跳转到播放器页面
+         * @param {string} id 歌曲 ID
+         */
         function playSong(id) {
             const song = songs.find(s => s.id === id);
             if (!song) { alert('歌曲数据未找到'); return; }

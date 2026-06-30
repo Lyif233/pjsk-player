@@ -211,7 +211,7 @@ body::before {
     opacity: 1;
 }
 
-/* 头像 */
+/* ── 头像 ── */
 .avatars {
     display: flex;
     gap: 10px;
@@ -236,7 +236,7 @@ body::before {
     background: #222;
 }
 
-/* 无歌词占位 */
+/* ── 无歌词占位 ── */
 .no-lyrics {
     position: absolute;
     inset: 0;
@@ -260,7 +260,8 @@ body::before {
     letter-spacing: 2px;
 }
 
-/* 歌词文字：始终以 40px 排版，保证布局稳定永不换行重排 */
+/* ── 歌词文字 ── */
+/* 始终以 40px 排版，保证布局稳定永不换行重排 */
 .lyric-text {
     font-size: 40px;
     font-weight: 600;
