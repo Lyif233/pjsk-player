@@ -50,6 +50,7 @@ createApp({
 
             // 1) 优先从 localStorage 读取（由 index.html 跳转触发）
             const raw = localStorage.getItem('pjsk_song_' + songId);
+            let neteaseId = null;
             if (raw) {
                 try {
                     const data = JSON.parse(raw);
@@ -58,12 +59,35 @@ createApp({
                     coverUrl.value = data.coverUrl || '';
                     audioSrc.value = data.audioUrl || '';
                     xlrcText.value = data.xlrcText || '';
+                    neteaseId = data.neteaseId || null;
                 } catch (e) {
                     console.warn('Parse localStorage failed:', e);
                 }
             }
 
-            // 2) 如果还没有歌词，尝试从 lyrics/[id].xlrc 加载
+            // 2) 如果有 neteaseId，从 Meting API 获取音频和歌手信息
+            if (neteaseId) {
+                try {
+                    const resp = await fetch(`https://meting.mikus.ink/api?server=netease&type=song&id=${neteaseId}`);
+                    if (resp.ok) {
+                        const apiData = await resp.json();
+                        if (apiData && apiData.length > 0) {
+                            const songInfo = apiData[0];
+                            // 覆盖音频链接和歌手信息
+                            audioSrc.value = songInfo.url;
+                            songArtist.value = songInfo.author;
+                            // 如果本地没有封面，也可以用网易云的封面
+                            if (!coverUrl.value) {
+                                coverUrl.value = songInfo.pic;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Fetch Meting API failed:', e);
+                }
+            }
+
+            // 3) 如果还没有歌词，尝试从 lyrics/[id].xlrc 加载
             if (!xlrcText.value) {
                 try {
                     const resp = await fetch('lyrics/' + songId + '.xlrc');
@@ -75,13 +99,13 @@ createApp({
                 }
             }
 
-            // 3) 尝试从歌词头部解析角色映射
+            // 4) 尝试从歌词头部解析角色映射
             const headersOk = tryParseHeaders(xlrcText.value || '');
             if (headersOk) {
                 configReady.value = true;
             }
 
-            // 4) 解析歌词（仅在有歌词时）
+            // 5) 解析歌词（仅在有歌词时）
             if (audioSrc.value && xlrcText.value && configReady.value) {
                 parsexlrc();
                 // 默认滚动到第一句实词
@@ -93,7 +117,7 @@ createApp({
                 });
             }
 
-            // 5) 准备音频（不再自动播放）
+            // 6) 准备音频（不再自动播放）
             if (audioSrc.value) {
                 audioLoaded.value = true;
             }

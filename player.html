@@ -41,16 +41,23 @@
                     <div class="song-artist">{{ songArtist || '-' }}</div>
                 </div>
                 <div class="progress-section">
+                    <div class="progress-bar" @click="seekAudio">
+                        <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+                    </div>
                     <div class="time-row">
                         <span class="current">{{ formatTime(currentTime) }}</span>
                         <span>{{ formatTime(duration) }}</span>
                     </div>
-                    <div class="progress-bar" @click="seekAudio">
-                        <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
-                    </div>
                 </div>
                 <div class="audio-select">
-                    <button class="btn" @click="togglePlay" tabindex="-1">{{ isPlaying ? '⏸' : '▶' }}</button>
+                    <div class="desktop-play-btn" @click="togglePlay">
+                        <svg viewBox="0 0 24 24" width="24" height="24" v-if="!isPlaying">
+                            <path fill="currentColor" d="M8 5v14l11-7z"/>
+                        </svg>
+                        <svg viewBox="0 0 24 24" width="24" height="24" v-else>
+                            <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                        </svg>
+                    </div>
                     <div v-if="audioError" style="color:#e55;font-size:12px;margin-top:6px;">{{ audioError }}</div>
                 </div>
             </div>

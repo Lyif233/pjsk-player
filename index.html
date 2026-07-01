@@ -559,7 +559,7 @@
          * @returns {string} 'complete' (完整) | 'no-lyrics' (无歌词) | 'unavailable' (不可用)
          */
         function getSongBadge(s) {
-            const audioOk = !!(s.neteaseId);
+            const audioOk = !!(s.neteaseId || s.audio);
             const lyricOk = LRC_IDS.has(s.id);
             if (audioOk && lyricOk) return 'complete';
             if (audioOk) return 'no-lyrics';
@@ -735,13 +735,14 @@
             const song = songs.find(s => s.id === id);
             if (!song) { alert('歌曲数据未找到'); return; }
             const NETBASE = 'http://music.163.com/song/media/outer/url?id=';
-            if (!song.neteaseId) { alert('该歌曲尚未配置音频文件'); return; }
+            if (!song.neteaseId && !song.audio) { alert('该歌曲尚未配置音频文件'); return; }
 
             const data = {
                 title: song.title || '',
                 artist: song.artist || '',
                 coverUrl: song.cover || '',
-                audioUrl: NETBASE + song.neteaseId + '.mp3',
+                audioUrl: song.audio ? song.audio : (NETBASE + song.neteaseId + '.mp3'),
+                neteaseId: song.neteaseId || null,
                 lrcText: '',
             };
             localStorage.setItem('pjsk_song_' + id, JSON.stringify(data));
